@@ -4264,7 +4264,9 @@ async function renderChatList() {
       chatItem.setAttribute("data-chat-name", chat.chat_name);
       chatItem.innerHTML = `
         <div class="chat__img">
-        <img src="src/images/Courses/${chat.chat_name}.png" alt="${chat.chat_name}">
+        <img src="src/images/Courses/${chat.chat_name.toUpperCase()}.png" alt="${
+        chat.chat_name
+      }">
         </div>
         <div class="chat__details">
           <div class="chat__name">${chat.chat_name}</div>
