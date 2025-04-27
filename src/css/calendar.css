@@ -500,7 +500,7 @@ textarea {
     flex-direction: row;
     width: 100%;
     margin-top: 2rem;
-    gap: 2rem;
+    gap: 4rem;
     justify-content: space-between;
     align-items: stretch;
   }
