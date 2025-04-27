@@ -234,7 +234,7 @@ async function renderActivities() {
         </div>
 <button class="instructions-btn" style="border-color:${
       dueDatePassed ? "#f9bec3" : "#5955B3"
-    }"data-assignment-id="${activity.assign_id}">
+    }"data-activity-id="${activity.activity_id}">
           <i class="fi fi-rr-document-signed" style="margin-right: 5px;color:${
             dueDatePassed ? "#f9bec3" : "#5955B3"
           }"></i>
