@@ -17,7 +17,7 @@
   overflow: hidden scroll;
   scrollbar-width: none;
   transition: all 0.3s ease-in-out;
-  animation: slideInDown 0.4s ease-in-out;
+  animation: slideOutRight 0.4s ease-in-out;
   position: relative;
   /* display: none; */
   /* display: none; */
@@ -89,6 +89,9 @@
   background-color: var(--color-grey-light-3);
   box-shadow: 0 0.2rem 0.2rem var(--color-primary);
 }
+.chat__img img {
+  width: 100%;
+}
 
 /*=============== CHAT VIEW ===============*/
 .chat__view {
@@ -106,7 +109,7 @@
   justify-content: space-between;
   display: none;
   transition: all 0.3s ease-in-out;
-  animation: slideInUp 0.4s ease-in-out;
+  animation: slideOutLeft 0.4s ease-in-out;
 }
 .chat__view.active {
   display: flex;
@@ -380,10 +383,12 @@
 
 @keyframes slideOutRight {
   from {
-    transform: translateX(0);
+    opacity: 0;
+    transform: translateX(-20%);
   }
   to {
-    transform: translateX(100%);
+    opacity: 1;
+    transform: translateX(0%);
   }
 }
 
@@ -411,7 +416,7 @@
 @keyframes slideOutLeft {
   from {
     opacity: 0;
-    transform: translateX(0);
+    transform: translateX(20%);
   }
   to {
     opacity: 1;
