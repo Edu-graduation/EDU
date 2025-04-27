@@ -467,6 +467,7 @@ textarea {
 .add__event-btn:hover {
   background-color: var(--color-primary-dark);
 }
+
 @media screen and (max-width: 56.25em) {
   .main-content {
     display: block;
@@ -479,6 +480,7 @@ textarea {
   }
   .week__calendar {
     gap: 4rem;
+    margin-top: 4rem;
   }
   .event__arrow {
     margin-left: 2rem;
@@ -492,6 +494,7 @@ textarea {
     justify-content: center;
     align-items: center;
     padding: 0rem;
+    margin-left: 4rem;
   }
   .right__side {
     flex-direction: row;
@@ -513,7 +516,22 @@ textarea {
     max-width: 100%;
   }
 }
-
+@media screen and (max-width: 75.5em) {
+  .event__arrow {
+    margin-left: 6rem;
+  }
+  .right__side {
+    justify-content: center;
+    margin-top: 0;
+  }
+  .middle__side {
+    margin-top: 14rem;
+  }
+  .calendar {
+    max-width: 100%;
+    min-height: 100%;
+  }
+}
 @keyframes fade {
   0% {
     opacity: 0;
@@ -971,14 +989,14 @@ textarea {
   background-color: var(--color-grey-light-2);
   z-index: 1;
 } */
-.student-event {
+/* .student-event {
   position: relative;
   border-left: 5px solid var(--color-primary) !important;
   background-color: var(--color-grey-light-2) !important;
-}
-.student-event::before {
+} */
+/* .student-event::before {
   content: "🧑‍🎓";
   position: absolute;
   left: 75%;
   top: 10%;
-}
+} */
