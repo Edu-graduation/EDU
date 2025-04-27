@@ -19,6 +19,7 @@
   transition: all 0.3s ease-in-out;
   animation: slideOutRight 0.4s ease-in-out;
   position: relative;
+
   /* display: none; */
   /* display: none; */
 }
