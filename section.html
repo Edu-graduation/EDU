@@ -5,6 +5,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>section</title>
+    <link rel="icon" type="image/x-icon" href="src/images/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="src/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="src/images/favicon-16x16.png"
+    />
     <link rel="stylesheet" href="src/css/base.css" />
     <link rel="stylesheet" href="src/css/section.css" />
 </head>
@@ -62,7 +75,7 @@
                             <!-- سيتم تعديل النص بناءً على اسم الكورس -->
                             <div class="icon_container">
                                 <div class="row">
-                                    <a href="lecturs.html" target="_blank"
+                                    <a href="./lectures.html" target="_blank"
                                         style="text-decoration: none; color: inherit;">
                                         <div class="lecturs">
                                             <span><img src="./src/images/journal-alt.png"
@@ -112,7 +125,7 @@
                 </div>
                 <div class="card-container2">
                     <div class="bell-image">
-                        <img src="src/images/bell.png" width="30">
+                        <!-- <img src="src/images/bell.png" width="30"> -->
                     </div>
                     <div class="section-box">
                         <h2>Section Instructor</h2>
@@ -165,6 +178,7 @@
                     <div class="card">
                         <img src="./src/images/coding.png" alt="program" width="60">
                         <p class="section">section 2</p>
+                        <p class="sectionTime"> </p>
                         <h2>blaa blaa</h2>
                     </div>
                 </div>
@@ -173,6 +187,7 @@
         <div>
         </div>
         <script>
+            
             document.addEventListener("DOMContentLoaded", async () => {
                 const courseId = sessionStorage.getItem("courseId");
                 const currentStudentId = sessionStorage.getItem("studentId");
@@ -183,163 +198,109 @@
                 const sectionCount = document.getElementById("section-count");
                 const cardsContainer = document.querySelector(".cards-container");
                 const instructorNameElement = document.getElementById("instructorName");
-
+            
                 const apiUrl = "https://iuiwdjtmdeempcqxeuhf.supabase.co/rest/v1/enrollment";
                 const queryParams = "select=*,student(*),course(*)";
                 const API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1aXdkanRtZGVlbXBjcXhldWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTY1MDcsImV4cCI6MjA2MDMzMjUwN30.XfSmnKA8wbsXIA1qkfYaRkzxtEdudIDNYbSJu-M5Zag";
-
+            
                 try {
-                    // Fetch student-course enrollment data
                     const response = await fetch(`${apiUrl}?${queryParams}`, {
-                        method: "GET",
                         headers: {
                             "apikey": API_KEY,
                             "Authorization": `Bearer ${API_KEY}`,
                             "Content-Type": "application/json"
-
                         }
-
                     });
-
+            
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    const data = await response.json();
-                    console.log(data);
-
-                    const myCourses = data.filter(item => item.student?.student_id == currentStudentId);
+                    const enrollments = await response.json();
+            
+                    const myCourses = enrollments.filter(item => item.student?.student_id == currentStudentId);
                     const currentCourse = myCourses.find(item => item.course?.course_id == courseId);
-
+            
                     if (!currentCourse) {
                         titleElement.textContent = "No course data found.";
                         return;
                     }
-
+            
                     const courseInfo = currentCourse.course;
                     const studentInfo = currentCourse.student;
-                    const instructorInfo = courseInfo?.instructor;
-
-                    // Update course title
-                    if (courseInfo?.course_name) {
-                        titleElement.textContent = courseInfo.course_name;
-                    }
-
-                    // Update student name
-                    if (studentNameElement && studentInfo?.student_name) {
-                        studentNameElement.textContent = `Hi, ${studentInfo.student_name}`;
-                    }
-
-                    // Update course name sentence
-                    if (courseNameElement && courseInfo?.course_name) {
-                        courseNameElement.textContent = `What Will We Study Today in "${courseInfo.course_name}" section "?`;
-                    }
-
-                    // Update instructor and description
-                    if (sectionBox && courseInfo) {
+            
+                    if (courseInfo?.course_name) titleElement.textContent = courseInfo.course_name;
+                    if (studentNameElement && studentInfo?.student_name) studentNameElement.textContent = `Hi, ${studentInfo.student_name}`;
+                    if (courseNameElement && courseInfo?.course_name) courseNameElement.textContent = `What Will We Study Today in \"${courseInfo.course_name}\" Section?`;
+                    if (sectionBox) {
                         const aboutSectionP = document.getElementById("abouCourse");
-
-                        if (instructorInfo?.instractor_name && instructorNameElement) {
-                            instructorNameElement.textContent = instructorInfo.instructor_name;
-
-                        }
-
-                        if (aboutSectionP) {
-                            aboutSectionP.textContent = courseInfo.course_description;
-                        }
+                        if (aboutSectionP && courseInfo.course_description) aboutSectionP.textContent = courseInfo.course_description;
                     }
-
-
-
-
-
-
-                    // Fetch session/section data
-                    const sessionsApiUrl = `https://iuiwdjtmdeempcqxeuhf.supabase.co/rest/v1/session?course_id=eq.${courseId}&select=*`;
-
-                    const sessionsResponse = await fetch(sessionsApiUrl, {
+            
+                    const sessionsResponse = await fetch(`https://iuiwdjtmdeempcqxeuhf.supabase.co/rest/v1/session?course_id=eq.${courseId}&select=*`, {
                         headers: {
                             "apikey": API_KEY,
                             "Authorization": `Bearer ${API_KEY}`
                         }
                     });
-
+            
                     const sessions = await sessionsResponse.json();
-
+            
                     const sections = sessions.filter(session =>
                         session.session_type?.toLowerCase().includes("section")
                     );
-
-                    console.log(sections);
-
-                    // Render section cards
+            
+                    sections.sort((a, b) => new Date(a.session_time) - new Date(b.session_time));
+            
                     if (cardsContainer) {
                         cardsContainer.innerHTML = "";
-
+            
                         sections.forEach((section, index) => {
-                            let iconSrc = "src/images/coding.png";
-                            if (section.session_type?.toLowerCase().includes("database")) {
-                                iconSrc = "src/images/mysql.png";
-                            } else if (index === 0) {
-                                iconSrc = "src/images/mysql.png";
-                            } else if (index === 2) {
-                                iconSrc = "src/images/coding (1).png";
+                            const sectionNumber = index + 1;
+                            const sectionTitle = section.session_name || (section.session_file_path?.split("/").pop().replace(/\.[^/.]+$/, "")) || `Section ${sectionNumber}`;
+                            const fileName = section.session_file_path?.split("/").pop();
+                            const fileUrl = fileName ? `https://iuiwdjtmdeempcqxeuhf.supabase.co/storage/v1/object/public/files/${fileName}` : "#";
+            
+                            let sessionDate = "";
+                            if (section.session_time) {
+                                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                                sessionDate = new Date(section.session_time).toLocaleDateString('en-US', options);
                             }
-
-                            let sectionNumber = index + 1;
-                            const numberMatch = section.session_type?.match(/\d+/);
-                            if (numberMatch) sectionNumber = numberMatch[0];
-
-                            let sectionTitle = "Section Content";
-                            if (section.session_name) {
-                                sectionTitle = section.session_name;
-                            } else if (section.session_file_path) {
-                                const fileName = section.session_file_path.split("/").pop().replace(/\.[^/.]+$/, "");
-                                sectionTitle = fileName.charAt(0).toUpperCase() + fileName.slice(1);
-                            }
-
+            
                             const cardHtml = `
                                 <div class="card-stack">
                                     <div class="card"></div>
                                     <div class="card"></div>
-                                    <div class="card">
+                                    <div class="card main-card">
                                         <img src="./src/images/lecPaper.png" alt="Section ${sectionNumber}" width="60">
-                                        <h2><p class="section">section ${sectionNumber}</p></h2>
-                                        <div class="file-link" data-file="${section.session_file_path}" style="display: none;"></div>
+                                        <p class="section">Section ${sectionNumber}</p>
+                                        <p class="session-date">${sessionDate}</p>
+                                        ${fileName ? `<a href="${fileUrl}" target="_blank" class="file-button-outline">Open File</a>` : "<p>No File Available</p>"}
                                     </div>
                                 </div>
                             `;
-
+            
                             cardsContainer.innerHTML += cardHtml;
                         });
-
-                        // Add click handlers
-                        document.querySelectorAll(".card-stack .card:last-child").forEach(card => {
-                            card.addEventListener("click", function () {
-                                const fileLink = this.querySelector(".file-link");
-                                if (fileLink?.dataset.file) {
-                                    const fileName = fileLink.dataset.file.split("/").pop();
-                                    const fileUrl = `https://iuiwdjtmdeempcqxeuhf.supabase.co/storage/v1/object/public/files/${fileName}`;
-                                    window.open(fileUrl, "_blank");
-                                }
-                            });
+            
+                        document.querySelectorAll(".main-card").forEach(card => {
                             card.style.cursor = "pointer";
                         });
                     }
-
-                    // Update section count
+            
                     if (sectionCount) {
                         sectionCount.textContent = `Your Sections (${sections.length})`;
                     }
-
+            
                 } catch (error) {
                     console.error("Error fetching section data:", error);
-                    if (titleElement) titleElement.textContent = "Error loading sections";
+                    if (titleElement) titleElement.textContent = "Error loading sections.";
                 }
             });
-
+            
+            
 
         </script>
         <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-        <script type="module" src="src/js/app.js"></script>
-        <script type="module" src="src/js/section.js"></script>
+        <script type="module" src="/src/js/app.js"></script>
+        <script type="module" src="/src/js/section.js"></script>
 </body>
 
 </html>

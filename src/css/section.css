@@ -35,7 +35,7 @@ margin: 0 30px 30px;
 .card-container1 {
 display: flex;
 flex-direction: row;
-gap: 50px;
+gap: 4%;
 justify-content: space-between;
 flex-wrap: wrap;
 /* علشان يبقوا responsive */
@@ -162,14 +162,14 @@ flex-wrap: wrap;
 .cards-container {
 display: flex;
 flex-wrap: wrap;
-gap: 20px;
+gap: 50px;
 justify-content: center;
 }
 
 .card-stack {
-position: relative;
-width: 250px;
-height: 250px;
+  position: relative;
+  width: 200px;
+  height: 22rem;
 }
 
 .card {
@@ -211,7 +211,8 @@ transform: scale(1.03);
 }
 
 .card img {
-margin: 25px 30px
+margin: 25px 30px;
+ width: 25%;
 }
 
 .icon {
@@ -225,10 +226,11 @@ text-overflow:inherit;
 
 
 .section {
-margin: 20px 15px;
-color: #7a7a7a;
-font-size: 14px;
-margin-bottom: 5px;
+  margin: 0px 0px;
+  color: #7a7a7a;
+  font-size: 14px;
+  margin-bottom: 0px;
+
 }
 
 .title {
@@ -272,53 +274,51 @@ margin-left: 8px;
 
 
 
-
 .file-button-outline {
-    display: inline-block;
-    background-color: transparent;
-    color: #4A6CF7;
-    padding: 7px 14px;
-    border: 2px solid #4A6CF7;
-    border-radius: 4px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    max-width: 140px;
-    text-align: center;
-  }
-  
-  .file-button-outline::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background-color: #4A6CF7;
-    transition: all 0.3s ease;
-    z-index: -1;
-  }
-  
-  .file-button-outline:hover {
-    color: white;
-  }
-  
-  .file-button-outline:hover::before {
-    width: 100%;
-  }
-  
-  .file-button-outline i {
-    font-size: 16px;
-  }
-  
+  display: inline-block;
+  background-color: transparent;
+  color: #4A6CF7;
+  padding: 7px 14px;
+  border: 2px solid #4A6CF7;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 140px;
+  text-align: center;
+}
+
+.file-button-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: #4A6CF7;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.file-button-outline:hover {
+  color: white;
+}
+
+.file-button-outline:hover::before {
+  width: 100%;
+}
+
+.file-button-outline i {
+  font-size: 16px;
+}
   /* تصميم رسالة عدم وجود أقسام */
   .no-sections {
     text-align: center;
@@ -334,12 +334,3 @@ margin-left: 8px;
 
 
 
-
-
-
-  /* .card-stack .card:nth-child(3) {
-    top: 0;
-    left: 0;
-    z-index: 3;
-    justify-content: center;
-    display: grid;} */
