@@ -319,6 +319,7 @@
   width: 2rem;
   height: 2rem;
   right: 2rem;
+  cursor: pointer;
   transform: translateY(-50%);
   color: var(--color-grey-dark-3);
 }
@@ -430,4 +431,21 @@
   to {
     opacity: 1;
   }
+}
+
+/* Remove the clear (X) button from search inputs */
+.chats__search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* For Microsoft Edge */
+.chats__search::-ms-clear {
+  display: none;
+}
+
+/* For older versions of IE */
+.chats__search::-ms-reveal {
+  display: none;
 }

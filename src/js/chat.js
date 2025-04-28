@@ -3749,6 +3749,7 @@
 import { supaClient } from "./app.js";
 import { getUserName } from "./app.js";
 const studentId = sessionStorage.getItem("studentId");
+const courseId = JSON.parse(sessionStorage.getItem("courseId"));
 const chatName = document.querySelector(".chat__name");
 const chats = document.querySelector(".chats");
 const collapseButton = document.querySelector(".collapse__chat-btn");
@@ -3762,7 +3763,6 @@ let processedMessageIds = new Set();
 // Cache for user names to reduce API calls
 const userNameCache = new Map();
 // Images array
-const CoursesImages = ["oop", "iis", "ais", "idss", "Ecommerce", "Tourism"];
 // Track all active chat IDs the user is part of
 let userChats = [];
 // Store subscriptions for all chats
@@ -3784,7 +3784,135 @@ if (studentId) {
       userNameCache.set(studentId, "Unknown User");
     });
 }
+async function OpenIfClickedFromCourse() {
+  if (courseId && isUserComingFrom("courses.html")) {
+    const chatName = await getCourseName();
+    openChatByName(chatName);
+    sessionStorage.setItem("courseId", null);
+  }
+}
+OpenIfClickedFromCourse();
+// Chat search functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.querySelector(".chats__search");
+  const chatsList = document.querySelector(".chats__list");
 
+  // Function to handle search
+  function handleSearch(event) {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    const chatItems = document.querySelectorAll(".chat__item");
+    // console.log(searchTerm);
+    // console.log(chatItems);
+    if (chatItems.length === 0) {
+      // No chat items loaded yet
+      return;
+    }
+
+    // Show all chats if search term is empty
+    if (searchTerm === "") {
+      chatItems.forEach((item) => {
+        item.style.display = "flex";
+      });
+      return;
+    }
+
+    // Filter chats based on search term
+    chatItems.forEach((item) => {
+      const chatName = item
+        .querySelector(".chat__name")
+        .textContent.toLowerCase();
+
+      // If you have chat preview text, you can include it in the search as well
+      const chatPreview = item.querySelector(".chat__preview")
+        ? item.querySelector(".chat__preview").textContent.toLowerCase()
+        : "";
+
+      if (chatName.includes(searchTerm) || chatPreview.includes(searchTerm)) {
+        item.style.display = "flex";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  }
+
+  // Add event listener for search input
+  if (searchInput) {
+    searchInput.addEventListener("input", handleSearch);
+    // Add clear search functionality when clicking the X (if supported by browser)
+    searchInput.addEventListener("search", function () {
+      handleSearch({ target: searchInput });
+    });
+  }
+
+  // Optionally, highlight the search term in results
+  function highlightSearchTerm(element, searchTerm) {
+    if (!searchTerm) return;
+
+    const innerHTML = element.innerHTML;
+    const index = innerHTML.toLowerCase().indexOf(searchTerm);
+
+    if (index >= 0) {
+      const highlighted =
+        innerHTML.substring(0, index) +
+        '<span class="highlight">' +
+        innerHTML.substring(index, index + searchTerm.length) +
+        "</span>" +
+        innerHTML.substring(index + searchTerm.length);
+      element.innerHTML = highlighted;
+    }
+  }
+
+  // Add highlight style to your CSS
+  const style = document.createElement("style");
+  style.textContent = `
+    .highlight {
+      background-color: rgba(89, 85, 179, 0.2);
+      font-weight: bold;
+    }
+  `;
+  document.head.appendChild(style);
+});
+// Add a custom clear button
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.querySelector(".chats__search");
+  const inputGroup = searchInput.closest(".input__group");
+
+  // Create custom clear button
+  const clearButton = document.createElement("button");
+  clearButton.className = "search__clear-btn";
+  clearButton.innerHTML = "×"; // Use × character or an SVG icon
+  clearButton.style.display = "none"; // Hide initially
+
+  // Insert the button into the DOM
+  inputGroup.appendChild(clearButton);
+
+  // Style the button with inline styles (or add to your CSS)
+  Object.assign(clearButton.style, {
+    position: "absolute",
+    right: "6rem",
+    background: "none",
+    border: "none",
+    fontSize: "2.8rem",
+    cursor: "pointer",
+    color: "#999aaa",
+  });
+
+  // Show/hide the clear button based on input content
+  searchInput.addEventListener("input", function () {
+    clearButton.style.display = this.value ? "block" : "none";
+  });
+
+  // Clear the input when button is clicked
+  clearButton.addEventListener("click", function () {
+    searchInput.value = "";
+    clearButton.style.display = "none";
+    searchInput.focus();
+
+    // Trigger the search event to update results
+    const event = new Event("input");
+    searchInput.dispatchEvent(event);
+  });
+});
 // Helper function to safely get user names with caching
 async function safeGetUserName(userId) {
   if (!userId) {
@@ -4738,3 +4866,240 @@ document.addEventListener("visibilitychange", () => {
     }, 10);
   }
 });
+/**
+ * Opens a specific chat by its name
+ * @param {string} chatName - The name of the chat to open
+ * @returns {Promise<boolean>} - Returns a promise that resolves to true if successful
+ */
+
+/**
+ * Checks if the user is coming from a specific page
+ * @param {string} pageUrl - The URL or partial URL to check against
+ * @returns {boolean} - Returns true if the user came from the specified page
+ */
+function isUserComingFrom(pageUrl) {
+  const referrer = document.referrer;
+
+  // If there's no referrer, the user either typed the URL directly,
+  // used a bookmark, or came from an HTTPS page to an HTTP page
+  if (!referrer) {
+    return false;
+  }
+
+  // Check if the referrer contains the pageUrl string
+  // This works for both exact URLs and partial matches
+  return referrer.includes(pageUrl);
+}
+
+// Example usage:
+if (isUserComingFrom("courses.html")) {
+  console.log("User came from the courses page");
+  // You could automatically open a specific chat
+  // openChatByName('Chemistry');
+}
+function openChatByName(chatName) {
+  console.log(`Attempting to open chat: "${chatName}"`);
+
+  // First make sure the chat list is loaded
+  return new Promise((resolve, reject) => {
+    // Function to check if chats are loaded and find our target
+    const findAndOpenChat = () => {
+      // Normalize the chat name for case-insensitive comparison
+      const normalizedChatName = chatName.trim().toLowerCase();
+      console.log(
+        `Looking for chat with normalized name: "${normalizedChatName}"`
+      );
+
+      // Find the chat item with matching name
+      const chatItems = document.querySelectorAll(".chat__item");
+      console.log(`Found ${chatItems.length} chat items`);
+
+      let targetChat = null;
+
+      // Log all chat items for debugging
+      chatItems.forEach((item) => {
+        const itemName = item.getAttribute("data-chat-name");
+        console.log(`Available chat: "${itemName}"`);
+
+        if (itemName && itemName.toLowerCase() === normalizedChatName) {
+          targetChat = item;
+        }
+      });
+
+      // If chat not found, try to reload the chat list
+      if (!targetChat) {
+        console.log(
+          `Chat "${chatName}" not found, checking if we need to load chats`
+        );
+
+        // Check if chat list is still loading
+        const loader = document.querySelector(".loading-chats");
+        if (loader) {
+          console.log("Chat list is still loading, will retry in 500ms");
+          setTimeout(findAndOpenChat, 500);
+          return;
+        }
+
+        // If no loader but still no chats, try to reload the list
+        if (chatItems.length === 0) {
+          console.log("No chats found, attempting to reload chat list");
+          renderChatList().then(() => {
+            setTimeout(findAndOpenChat, 500);
+          });
+          return;
+        }
+
+        console.error(`Chat "${chatName}" not found in the available chats`);
+        resolve(false);
+        return;
+      }
+
+      console.log(`Found target chat: "${chatName}"`);
+
+      // Get the chat image to update the main chat display
+      const chatImg = targetChat.querySelector(".chat__img img");
+      if (chatImg) {
+        chatImgEl.src = chatImg.src;
+        console.log("Updated chat image");
+      }
+
+      // Remove active class from all chats
+      document.querySelectorAll(".chat__item").forEach((item) => {
+        item.classList.remove("active");
+      });
+
+      // Add active class to the target chat
+      targetChat.classList.add("active");
+      console.log("Updated active chat classes");
+
+      // Open the chat view
+      openChat();
+      console.log("Opened chat view");
+
+      const chatId = targetChat.getAttribute("data-chat-id");
+      console.log(`Target chat ID: ${chatId}`);
+
+      // Don't reload if we're already on this chat
+      if (currentChatId === chatId) {
+        console.log("Already on this chat, not reloading");
+        resolve(true);
+        return;
+      }
+
+      // Unsubscribe from previous chat subscription if exists
+      if (subscription) {
+        subscription.unsubscribe();
+        console.log("Unsubscribed from previous chat");
+      }
+
+      currentChatId = chatId;
+
+      // Reset processed message IDs when changing chats
+      processedMessageIds = new Set();
+
+      // Show loading indicator
+      const messagesContainer = document.querySelector(
+        ".chat__messages-container"
+      );
+      if (messagesContainer) {
+        messagesContainer.innerHTML =
+          '<div class="loading-messages loader"></div>';
+        console.log("Added loading indicator");
+      }
+
+      // Load chat details and messages
+      Promise.all([getChatDetails(chatId), retrieveChatMessages(chatId)])
+        .then(([chatDetails, chatMessages]) => {
+          console.log("Loaded chat details and messages");
+
+          // Render chat details
+          renderChatDetails(chatDetails);
+
+          // Extract all user IDs for parallel name loading
+          const userIds = chatMessages.map((msg) => msg.senderid);
+          userIds.push(studentId); // Include current user
+
+          // Prefetch all user names before rendering messages
+          loadUserNames(userIds).then(() => {
+            // Only render if this is still the current chat
+            if (currentChatId === chatId) {
+              // Render chat messages
+              renderChatMessages(chatMessages, false);
+              console.log("Rendered chat messages");
+            }
+
+            resolve(true);
+          });
+
+          // Set up event listener for send button
+          setupSendMessageHandler(chatId);
+
+          // Make sure subscription is active for this chat
+          setupChatSubscription(chatId);
+        })
+        .catch((error) => {
+          console.error("Error loading messages:", error);
+          if (messagesContainer) {
+            messagesContainer.innerHTML =
+              '<div class="error-messages">Error loading messages. Please try again.</div>';
+          }
+          resolve(false);
+        });
+    };
+
+    // Start the process
+    findAndOpenChat();
+  });
+}
+// Alternative version that directly simulates a click on the chat item
+function openChatByNameSimple(chatName) {
+  console.log(`Looking for chat: "${chatName}"`);
+
+  // Wait for the chat list to be loaded
+  if (document.querySelector(".loading-chats")) {
+    console.log("Chat list still loading, retrying in 500ms");
+    setTimeout(() => openChatByNameSimple(chatName), 500);
+    return false;
+  }
+
+  // Find the chat item with the matching name
+  const chatItems = document.querySelectorAll(".chat__item");
+  let found = false;
+
+  chatItems.forEach((item) => {
+    const itemName = item.getAttribute("data-chat-name");
+    if (itemName && itemName.toLowerCase() === chatName.toLowerCase()) {
+      console.log(`Found chat "${itemName}", clicking it`);
+      // Simulate a click on the chat item
+      item.click();
+      found = true;
+    }
+  });
+
+  if (!found) {
+    console.error(`Chat "${chatName}" not found`);
+    return false;
+  }
+
+  return true;
+}
+async function getCourseName() {
+  if (courseId) {
+    console.log(courseId);
+    const { data, error } = await supaClient
+      .from("course")
+      .select("*")
+      .eq("course_id", courseId);
+
+    if (error) {
+      console.error("Error fetching course name:", error);
+      showToast("Failed to load course information", "error");
+      return;
+    }
+
+    if (data && data.length > 0) {
+      console.log(data[0].course_name);
+      return data[0].course_name;
+    }
+  }
+}
