@@ -314,7 +314,9 @@
           e.target.closest(".courses__modal") !== courseModal &&
           e.target === overlay
         ) {
+
           hideCourseModal();
+          sessionStorage.setItem("courseId", null);
         }
       });
       // console.log(supaClient);
@@ -424,8 +426,9 @@
             const coursesEl = document.querySelectorAll(".course");
 
             coursesEl.forEach((coursesEl) => {
+              
               coursesEl.addEventListener("click", (e) => {
-
+                
                 const courseId = e.target.closest(".course").dataset.courseId;
                 sessionStorage.setItem("courseId", courseId);
                 showCourseModal();
